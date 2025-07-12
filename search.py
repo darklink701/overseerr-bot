@@ -21,8 +21,11 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 # Check if the required environment variables are set and print a warning if not
 @bot.event
 async def on_ready():
-    print(f"✅ Bot is online as {bot.user}")
-
+    if not OVERSEERR_API_KEY or not OVERSEERR_URL or not DISCORD_BOT_TOKEN:
+        print("⚠️ Warning: One or more environment variables are not set. Please check your .env file.")
+    print(f"Logged in as {bot.user.name} (ID: {bot.user.id})")
+    print("Bot is ready to receive commands!")
+    print("------")
 # Command to search for movies or TV shows in Overseerr    
 @bot.command()
 async def search(ctx, *, query: str):
@@ -68,5 +71,5 @@ async def search(ctx, *, query: str):
 
     await ctx.send(embed=embed)
 
-# Run the bot with the token from the environment variable
+# Initialize by invoking the bot with the token from the environment variable
 bot.run(DISCORD_BOT_TOKEN)
