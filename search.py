@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import requests
+import urllib.parse
 import os
 from dotenv import load_dotenv
 
@@ -10,6 +11,7 @@ load_dotenv()
 OVERSEERR_API_KEY = os.getenv("OVERSEERR_API_KEY")
 OVERSEERR_URL = os.getenv("OVERSEERR_URL")
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+REDIRECT_URI = os.getenv("REDIRECT_URI")
 
 # Discord bot permissions
 intents = discord.Intents.default()
@@ -31,15 +33,19 @@ async def on_ready():
 async def search(ctx, *, query: str):
 
     """Searches for a movie or TV show in Overseerr."""
+    print(f"[DEBUG] Query received: '{query}'")
     headers = {
         "X-Api-Key": OVERSEERR_API_KEY
     }
+    import urllib.parse
     params = {
         "query": query
     }
-
-    search_url = f"{OVERSEERR_URL}/api/v1/search"
-    response = requests.get(search_url, headers=headers, params=params)
+    # Encode query so spaces are %20 and colons are %3A
+    encoded_query = urllib.parse.quote(query, safe='')
+    search_url = f"{OVERSEERR_URL}/api/v1/search?query={encoded_query}"
+    response = requests.get(search_url, headers=headers)
+    print(f"[DEBUG] Requesting URL: {search_url}")
 
     if response.status_code != 200:
         await ctx.send("❌ Error searching Overseerr.")
@@ -73,10 +79,32 @@ async def search(ctx, *, query: str):
     await ctx.send(embed=embed)
 
 @bot.command()
+async def request(ctx, tmdb_id: int):
+    """Sends a request to Overseerr for the specified TMDb ID."""
+    headers = {
+        "X-Api-Key": OVERSEERR_API_KEY,
+        "Content-Type": "application/json"
+    }
+    data = {
+        "tmdbId": tmdb_id
+    }
+
+    request_url = f"{OVERSEERR_URL}/api/v1/request"
+    response = requests.post(request_url, headers=headers, json=data)
+
+    if response.status_code == 201:
+        await ctx.send(f"🥊 Boom! Request for TMDb ID `{tmdb_id}` landed—like my fist in a bad guy’s face. Don’t forget to thank your favorite superstar, chump!")
+    elif response.status_code == 409:
+        await ctx.send(f"🕶️ Already requested? Pfft. Even Johnny Cage doesn’t do reruns. Try something original next time!")
+    else:
+        await ctx.send(f"💥 Request for TMDb ID `{tmdb_id}` failed. Must be a glitch in the Matrix—or maybe you just need more star power. Status code: {response.status_code}")
+
+# Command to initiate login via Plex OAuth in Overseerr. TO DO: Capture the callback and store the token.
+@bot.command()
 async def login(ctx):
-    await ctx.send("🔐 This shit is under construction, bromigo. Ask me for an autograph, or get lost.")
+    # await ctx.send("🔐 This shit is under construction, bromigo. Ask me for an autograph, or get lost.")
     
-    return # Anything below this won't run right now
+    # return # Anything below this won't run right now
     redirect_uri = REDIRECT_URI
     login_url = f"{OVERSEERR_URL}/login?redirect={redirect_uri}"
 
