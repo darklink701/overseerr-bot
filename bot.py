@@ -6,8 +6,7 @@ import asyncio
 import xml.etree.ElementTree as ET
 from discord.ext import commands
 from dotenv import load_dotenv
-
-import token_store  # our SQLite + Fernet helpers
+import token_store
 
 # ******************* env / config *******************
 load_dotenv()
