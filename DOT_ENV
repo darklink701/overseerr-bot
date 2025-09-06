@@ -1,8 +1,9 @@
 ##### RENAME THIS FILE TO .env AND FILL IN THE VALUES #####
+##### DO NOT REMOVE ' CHARACTERS. DO NOT ADD SPACES AFTER = #####
 
 
-#OVERSEERR_API_KEY= Your Overseerr API key
-#DISCORD_BOT_TOKEN= Your Discord bot token
-#CRYPTO_KEY= Generate this with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-
+#OVERSEERR_API_KEY='Your Overseerr API key'
+#DISCORD_BOT_TOKEN='Your Discord bot token'
+#CRYPTO_KEY=Generate this with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+#OVERSEERR_URL='https://overseerrurl.subdomain.org'
 
