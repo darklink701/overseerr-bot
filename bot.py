@@ -234,4 +234,6 @@ async def on_command_error(ctx, error):
         await ctx.send("❌ Something broke, but don't blame me. I only break necks.")
 
 # ******************* run *******************
+if not DISCORD_BOT_TOKEN:
+    raise RuntimeError("DISCORD_BOT_TOKEN environment variable is missing.")
 bot.run(DISCORD_BOT_TOKEN)
